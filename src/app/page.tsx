@@ -1,15 +1,30 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function Home() {
   const [image, setImage] = useState<string | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setImage(imageUrl);
+
+      const img = new window.Image();
+      img.src = imageUrl;
+      img.onload = () => {
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0, img.width, img.height);
+          }
+        }
+      };
     }
   };
 
@@ -25,6 +40,7 @@ export default function Home() {
           className="hidden"
         />
       </label>
+      <canvas ref={canvasRef} className="hidden" />
       {image && (
         <div className="w-full max-w-lg flex flex-col items-center">
           <h2 className="text-xl font-semibold text-gray-700 mb-2">Preview:</h2>
