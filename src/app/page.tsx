@@ -31,6 +31,90 @@ export default function Home() {
     }
   };
 
+  // Function to calculate the Euclidean distance between two colors
+  const calculateDistance = (
+    color1: { r: number; g: number; b: number },
+    color2: { r: number; g: number; b: number }
+  ) => {
+    const dr = color1.r - color2.r;
+    const dg = color1.g - color2.g;
+    const db = color1.b - color2.b;
+    return Math.sqrt(dr * dr + dg * dg + db * db);
+  };
+
+  // K-means clustering function
+  const kMeans = (colors: { r: number; g: number; b: number }[], k: number) => {
+    // 1. Randomly initialize k centroids
+    let centroids = [];
+    for (let i = 0; i < k; i++) {
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      centroids.push({ ...randomColor });
+    }
+
+    let prevCentroids = Array.from(centroids);
+    let clusters: { r: number; g: number; b: number }[][] = Array(k)
+      .fill(null)
+      .map(() => []); // array of k empty arrays
+
+    let converged = false;
+
+    while (!converged) {
+      // 2. Assign each color to the nearest centroid
+      clusters = Array(k)
+        .fill(null)
+        .map(() => []); // Reset clusters
+      for (const color of colors) {
+        let closestCentroidIndex = 0;
+        let minDistance = Infinity;
+        for (let i = 0; i < k; i++) {
+          const dist = calculateDistance(color, centroids[i]);
+          if (dist < minDistance) {
+            minDistance = dist;
+            closestCentroidIndex = i;
+          }
+        }
+        clusters[closestCentroidIndex].push(color);
+      }
+
+      // 3. Recalculate centroids
+      centroids = clusters.map((cluster) => {
+        // TODO consider returning random color if cluster is empty
+        if (cluster.length === 0) return { r: 0, g: 0, b: 0 }; // Avoid empty clusters
+        let sumR = 0,
+          sumG = 0,
+          sumB = 0;
+        for (const color of cluster) {
+          sumR += color.r;
+          sumG += color.g;
+          sumB += color.b;
+        }
+        const count = cluster.length;
+        return {
+          r: Math.round(sumR / count),
+          g: Math.round(sumG / count),
+          b: Math.round(sumB / count),
+        };
+      });
+
+      // 4. Check for convergence (if centroids have stopped changing)
+      converged = true;
+      for (let i = 0; i < k; i++) {
+        if (
+          centroids[i].r !== prevCentroids[i].r ||
+          centroids[i].g !== prevCentroids[i].g ||
+          centroids[i].b !== prevCentroids[i].b
+        ) {
+          converged = false;
+          break;
+        }
+      }
+
+      prevCentroids = Array.from(centroids);
+    }
+
+    return centroids; // Return the k dominant colors (centroids)
+  };
+
   const extractPixelData = () => {
     const canvas = canvasRef.current;
     if (canvas) {
@@ -47,12 +131,16 @@ export default function Home() {
           const r = pixels[i]; // Red
           const g = pixels[i + 1]; // Green
           const b = pixels[i + 2]; // Blue
-          // We ignore the alpha (A) channel here
-
           colors.push({ r, g, b });
         }
 
         console.log("Extracted Colors:", colors);
+
+        // Use K-means clustering to find the k dominant colors
+        const k = 5; // You can change this number to get more or fewer colors
+        const dominantColors = kMeans(colors, k);
+
+        console.log("Dominant Colors:", dominantColors);
       }
     }
   };
