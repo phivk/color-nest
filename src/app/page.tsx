@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRef, useState } from "react";
+import Head from "next/head";
 
 export default function Home() {
   const [image, setImage] = useState<string | null>(null);
@@ -150,45 +151,62 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-      <h1 className="text-4xl font-bold text-gray-800 mb-6">Upload an Image</h1>
-      <label className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow-md mb-4">
-        Choose File
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          className="hidden"
-        />
-      </label>
-      <canvas ref={canvasRef} className="hidden" />
-      {image && (
-        <div className="w-full max-w-lg flex flex-col items-center">
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">Preview:</h2>
-          <Image
-            src={image}
-            alt="Uploaded"
-            className="rounded-lg shadow-md w-full h-auto"
-            width={500}
-            height={500}
-          />
-        </div>
-      )}
+    <>
+      <Head>
+        <title>ColorNest</title>
+      </Head>
+      <main className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+        <h1 className="text-5xl font-semibold text-teal-700 mb-8">
+          Welcome to ColorNest
+        </h1>
+        <h2 className="text-xl text-gray-700 mb-4">
+          Discover the Colors of Nature
+        </h2>
 
-      {/* Render Color Palette */}
-      {dominantColors.length > 0 && (
-        <div className="mt-6 flex space-x-4">
-          {dominantColors.map((color, index) => (
-            <div
-              key={index}
-              className="w-16 h-16 rounded-lg shadow-md"
-              style={{
-                backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})`,
-              }}
+        {/* Upload Button */}
+        <label className="cursor-pointer bg-gradient-to-r from-teal-400 to-blue-500 hover:from-teal-500 hover:to-blue-600 text-white font-medium py-3 px-6 rounded-xl shadow-lg mb-6 transition-all duration-300 ease-in-out">
+          Choose File
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
+          />
+        </label>
+
+        <canvas ref={canvasRef} className="hidden" />
+
+        {/* Image Preview */}
+        {image && (
+          <div className="w-full max-w-lg flex flex-col items-center">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Preview:
+            </h2>
+            <Image
+              src={image}
+              alt="Uploaded"
+              className="rounded-lg shadow-md w-full h-auto"
+              width={500}
+              height={500}
             />
-          ))}
-        </div>
-      )}
-    </main>
+          </div>
+        )}
+
+        {/* Color Palette */}
+        {dominantColors.length > 0 && (
+          <div className="mt-6 grid grid-cols-3 sm:grid-cols-5 gap-4">
+            {dominantColors.map((color, index) => (
+              <div
+                key={index}
+                className="w-16 h-16 rounded-lg shadow-lg transform transition duration-300 ease-in-out hover:scale-110"
+                style={{
+                  backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})`,
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </main>
+    </>
   );
 }
