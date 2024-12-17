@@ -40,18 +40,19 @@ export default function Home() {
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const pixels = imageData.data;
 
-        console.log("Pixel Data:", pixels);
-        console.log("Total Pixels:", pixels.length / 4); // Each pixel has 4 values (R, G, B, A)
+        const colors: { r: number; g: number; b: number }[] = [];
 
-        // Example: Log first 10 pixels
-        for (let i = 0; i < 10; i++) {
-          const offset = i * 4;
-          console.log(
-            `Pixel ${i + 1}: R=${pixels[offset]}, G=${pixels[offset + 1]}, B=${
-              pixels[offset + 2]
-            }, A=${pixels[offset + 3]}`
-          );
+        // Loop through the pixel data and store RGB values
+        for (let i = 0; i < pixels.length; i += 4) {
+          const r = pixels[i]; // Red
+          const g = pixels[i + 1]; // Green
+          const b = pixels[i + 2]; // Blue
+          // We ignore the alpha (A) channel here
+
+          colors.push({ r, g, b });
         }
+
+        console.log("Extracted Colors:", colors);
       }
     }
   };
