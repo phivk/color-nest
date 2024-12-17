@@ -156,7 +156,7 @@ export default function Home() {
         <title>ColorNest</title>
       </Head>
       <main className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-        <h1 className="text-5xl font-semibold text-teal-700 mb-8">
+        <h1 className="text-5xl font-semibold text-teal-700 my-8">
           Welcome to ColorNest
         </h1>
         <h2 className="text-xl text-gray-700 mb-4">
@@ -178,7 +178,7 @@ export default function Home() {
 
         {/* Image Preview */}
         {image && (
-          <div className="w-full max-w-lg flex flex-col items-center">
+          <div className="w-full max-w-sm flex flex-col items-center">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Preview:
             </h2>
