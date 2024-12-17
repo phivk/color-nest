@@ -22,9 +22,37 @@ export default function Home() {
             canvas.width = img.width;
             canvas.height = img.height;
             ctx.drawImage(img, 0, 0, img.width, img.height);
+
+            // Extract pixel data after drawing the image
+            extractPixelData();
           }
         }
       };
+    }
+  };
+
+  const extractPixelData = () => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        // Get all pixel data from the canvas
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = imageData.data;
+
+        console.log("Pixel Data:", pixels);
+        console.log("Total Pixels:", pixels.length / 4); // Each pixel has 4 values (R, G, B, A)
+
+        // Example: Log first 10 pixels
+        for (let i = 0; i < 10; i++) {
+          const offset = i * 4;
+          console.log(
+            `Pixel ${i + 1}: R=${pixels[offset]}, G=${pixels[offset + 1]}, B=${
+              pixels[offset + 2]
+            }, A=${pixels[offset + 3]}`
+          );
+        }
+      }
     }
   };
 
