@@ -5,6 +5,9 @@ import { useRef, useState } from "react";
 export default function Home() {
   const [image, setImage] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [dominantColors, setDominantColors] = useState<
+    { r: number; g: number; b: number }[]
+  >([]);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -137,10 +140,11 @@ export default function Home() {
         console.log("Extracted Colors:", colors);
 
         // Use K-means clustering to find the k dominant colors
-        const k = 5; // You can change this number to get more or fewer colors
+        const k = 5;
         const dominantColors = kMeans(colors, k);
 
-        console.log("Dominant Colors:", dominantColors);
+        // Update the state with the dominant colors
+        setDominantColors(dominantColors);
       }
     }
   };
@@ -168,6 +172,21 @@ export default function Home() {
             width={500}
             height={500}
           />
+        </div>
+      )}
+
+      {/* Render Color Palette */}
+      {dominantColors.length > 0 && (
+        <div className="mt-6 flex space-x-4">
+          {dominantColors.map((color, index) => (
+            <div
+              key={index}
+              className="w-16 h-16 rounded-lg shadow-md"
+              style={{
+                backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})`,
+              }}
+            />
+          ))}
         </div>
       )}
     </main>
